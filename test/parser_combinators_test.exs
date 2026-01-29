@@ -4,27 +4,27 @@ defmodule ParserCombinatorsTest do
 
   alias ParserCombinators, as: P
 
-  test "digit/1" do
-    assert {:ok, 1, ""} = P.digit("1")
+  test "satisfy digit/1" do
+    assert {:ok, [result: "1", rest: ""]} = P.digit().("1")
   end
 
-  test "digit/1as2" do 
-    assert {:ok, 1, "as2"} = P.digit("1as2")
+  test "satsfy di[git/1as2" do 
+    assert {:ok, [result: "1", rest: "as2"]} = P.digit().("1as2")
   end
 
-  test "digit/s234" do 
-    assert %{error: "digit not found", input: "s234"} = P.digit("s234")
+  test "satsfy digit/s234" do 
+    assert {:error, [result: "didn't satisfy condition", rest: "s234"]} = P.digit().("s234")
   end
 
-  test "letter/a" do
-    assert {:ok, "a", ""} = P.letter("a")
+  test "satsfy letter/a" do
+    assert {:ok, [result: "a", rest: ""]} = P.letter().("a")
   end
 
-  test "letter/as2" do 
-    assert {:ok, "a", "s2"} = P.letter("as2")
+  test "satsfy letter/as2" do 
+    assert {:ok, [result: "a", rest: "s2"]} = P.letter().("as2")
   end
 
-  test "letter/234" do 
-    assert %{error: "letter not found", input: "234"} = P.letter("234")
+  test "satsfy letter/234" do 
+  assert {:error, [result: "didn't satisfy condition", rest: "234"]} = P.letter().("234")
   end
 end
