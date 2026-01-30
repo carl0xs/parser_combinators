@@ -21,3 +21,6 @@ parser_combinators-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Nix
+.direnv/
