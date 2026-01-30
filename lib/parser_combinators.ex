@@ -28,4 +28,22 @@ defmodule ParserCombinators do
       c in ?a..?z or c in ?A..?Z
     end)
   end
+
+  def many(parser) do
+    fn input ->
+      case parser.(input) do
+        {:ok, result, rest} ->
+          case many(parser).(rest) do
+            {:ok, results, remaining} ->
+              {:ok, [result | results], remaining}
+
+            :error ->
+              {:ok, [result], rest}
+          end
+
+        :error ->
+          {:ok, [], input}
+      end
+    end
+  end
 end
