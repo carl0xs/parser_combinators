@@ -62,4 +62,16 @@ defmodule ParserCombinators do
       end
     end
   end
+
+  def _or(parser1, parser2) do
+    fn input ->
+      case parser1.(input) do
+        {:ok, parsed, rest} ->
+          {:ok, parsed, rest}
+
+        {:error, _, _} ->
+          parser2.(input)
+      end
+    end
+  end
 end
