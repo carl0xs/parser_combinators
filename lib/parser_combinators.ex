@@ -6,14 +6,16 @@ defmodule ParserCombinators do
   def satisfy(predicate) when is_function(predicate, 1) do
     fn
       <<char::utf8, rest::binary>> ->
-        if predicate.(<<char::utf8>>) do
-          {:ok, result: <<char::utf8>>, rest: rest}
+        token = <<char::utf8>>
+
+        if predicate.(token) do
+          {:ok, token, rest}
         else
-          {:error, result: "didn't satisfy condition", rest: <<char::utf8, rest::binary>>}
+          {:error, "didn't satisfy condition", <<char::utf8, rest::binary>>}
         end
 
       input ->
-        {:error, result: "empty input", rest: input}
+        {:error, "empty input", input}
     end
   end
 
@@ -31,18 +33,32 @@ defmodule ParserCombinators do
 
   def many(parser) do
     fn input ->
-      case parser.(input) do
-        {:ok, result, rest} ->
-          case many(parser).(rest) do
-            {:ok, results, remaining} ->
-              {:ok, [result | results], remaining}
+      do_many(parser, input, [])
+    end
+  end
 
-            :error ->
-              {:ok, [result], rest}
-          end
+  defp do_many(parser, input, acc) do
+    case parser.(input) do
+      {:ok, result, rest} ->
+        if rest == input do
+          {:ok, Enum.reverse(acc), input}
+        else
+          do_many(parser, rest, [result | acc])
+        end
+
+      {:error, _reason, _rest} ->
+        {:ok, Enum.reverse(acc), input}
+    end
+  end
+
+  def map(parser, transform) do
+    fn input ->
+      case parser.(input) do
+        {:ok, parsed, rest} ->
+          {:ok, transform.(parsed), rest}
 
         :error ->
-          {:ok, [], input}
+          {:error, [], input}
       end
     end
   end
