@@ -85,4 +85,30 @@ defmodule ParserCombinators do
       end
     end
   end
+
+  def _and(parser1, parser2) do
+    fn input ->
+      case parser1.(input) do
+        {:ok, parsed1, rest1} ->
+          case parser2.(rest1) do
+            {:ok, parsed2, rest2} ->
+              {:ok, [parsed1, parsed2], rest2}
+
+            {:error, parsed2, _} ->
+              {:error, parsed2, input}
+          end
+
+        {:error, parsed1, _} ->
+          {:error, parsed1, input}
+      end
+    end
+  end
+
+  def preceeded(pre, parser) do
+    P.map(P._and(pre, parser), fn [_, r] -> r end)
+  end
+
+  def terminated(parser, pre) do
+    P.map(P._and(parser, pre), fn [r, _] -> r end)
+  end
 end

@@ -62,6 +62,22 @@ defmodule ParserCombinatorsTest do
 
     assert {:ok , "1", "23"} = letter_or_digit.("123")
   end
+  
+  test "_and digit and letter/1a" do
+    digit_and_letter =
+      P._and(P.digit, P.letter)
 
+    assert {:ok, ["1", "a"], ""} = digit_and_letter.("1a")
+  end
 
+  test "_and digit and letter/1a error" do
+    digit_and_letter =
+      P._and(P.digit, P.letter)
+
+    assert {:error, "didn't satisfy condition", "a1"} = digit_and_letter.("a1")
+  end
+
+  test "preceeded" do
+    assert {:ok, ["1, ""], ""} = P.preceeded(P.char("x"), P.digit).("x1")
+  end
 end
