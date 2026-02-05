@@ -82,4 +82,13 @@ defmodule ParserCombinatorsTest do
 
     assert {:error, "didn't satisfy condition", "a1"} = digit_and_letter.("a1")
   end
+
+  test "preceeded" do
+    assert {:ok, "1", ""} = P.preceeded(P.char("x"), P.digit).("x1")
+  end
+
+  test "terminated" do
+    letters = P.map(P.many(P.letter), fn r -> r |> Enum.join("") end)
+    assert {:ok, "lol", ""} = P.terminated(letters, P.char(":")).("lol:")
+  end
 end
