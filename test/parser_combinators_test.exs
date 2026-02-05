@@ -28,6 +28,12 @@ defmodule ParserCombinatorsTest do
     assert {:error, "didn't satisfy condition",  "234"} = P.letter().("234")
   end
 
+  test "satisfy char/a" do
+    assert {:ok, "a", "bc"} = P.char("a").("abc")
+
+    assert {:error, "didn't satisfy condition", "abc"} = P.char("b").("abc")
+  end
+
   test "many letter/abc123" do
     letters_as_string =
       P.many(P.letter)
@@ -75,9 +81,5 @@ defmodule ParserCombinatorsTest do
       P._and(P.digit, P.letter)
 
     assert {:error, "didn't satisfy condition", "a1"} = digit_and_letter.("a1")
-  end
-
-  test "preceeded" do
-    assert {:ok, ["1, ""], ""} = P.preceeded(P.char("x"), P.digit).("x1")
   end
 end

@@ -19,6 +19,14 @@ defmodule ParserCombinators do
     end
   end
 
+  def char(expected) when is_integer(expected) do
+    satisfy(fn <<c::utf8>> -> c == expected end)
+  end
+
+  def char(<<expected::utf8>>) do
+    satisfy(fn <<c::utf8>> -> c == expected end)
+  end
+
   def digit do
     P.satisfy(fn <<c::utf8>> ->
       c in ?0..?9
