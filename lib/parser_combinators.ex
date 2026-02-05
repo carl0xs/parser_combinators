@@ -74,4 +74,15 @@ defmodule ParserCombinators do
       end
     end
   end
+
+  def any(parsers) do
+    fn input ->
+      if length(parsers) == 0 do
+        {:error, "no match", input}
+      else
+        [first | others] = parsers
+        P._or(first, P.any(others)).(input)
+      end
+    end
+  end
 end

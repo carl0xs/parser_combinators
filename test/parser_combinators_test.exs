@@ -53,4 +53,15 @@ defmodule ParserCombinatorsTest do
 
     assert {:ok , "1", "23"} = letter_or_digit.("123")
   end
+
+  test "any" do
+    letter_or_digit = 
+      P.any([P.digit, P.letter])
+
+    assert {:ok , "a", "bc"} = letter_or_digit.("abc")
+
+    assert {:ok , "1", "23"} = letter_or_digit.("123")
+  end
+
+
 end
