@@ -91,4 +91,15 @@ defmodule ParserCombinatorsTest do
     letters = P.map(P.many(P.letter), fn r -> r |> Enum.join("") end)
     assert {:ok, "lol", ""} = P.terminated(letters, P.char(":")).("lol:")
   end
+
+  test "string single and double quoted" do
+    letters = P.map(P.many(P.letter), fn r -> r |> Enum.join("") end)
+    double = P.delimited(P.char(~s'"'), letters, P.char(~s'"'))
+    single = P.delimited(P.char(~s"'"), letters, P.char(~s"'"))
+    quoted = P._or(double, single)
+
+    assert {:ok, "abc", ""} = quoted.(~s'"abc"')
+    # single quoted
+    assert {:ok, ~s'abc', ""} = single.("'abc'")
+  end
 end

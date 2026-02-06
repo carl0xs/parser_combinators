@@ -119,4 +119,8 @@ defmodule ParserCombinators do
   def terminated(parser, pre) do
     P.map(P._and(parser, pre), fn [r, _] -> r end)
   end
+
+  def delimited(pre, parser, term) do
+    P.preceeded(pre, terminated(parser, term))
+  end
 end
