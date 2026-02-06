@@ -71,6 +71,18 @@ defmodule ParserCombinators do
     end
   end
 
+  def sequence(parser, f) do
+    fn input ->
+      case parser.(input) do
+        {:ok, parsed, rest} ->
+          {:ok, f.(parsed), rest}
+
+        {:error, parsed, rest} ->
+          {:error, parsed, input}
+      end
+    end
+  end
+
   def _or(parser1, parser2) do
     fn input ->
       case parser1.(input) do

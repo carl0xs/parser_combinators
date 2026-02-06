@@ -98,8 +98,25 @@ defmodule ParserCombinatorsTest do
     single = P.delimited(P.char(~s"'"), letters, P.char(~s"'"))
     quoted = P._or(double, single)
 
+    # double quoted
     assert {:ok, "abc", ""} = quoted.(~s'"abc"')
+
     # single quoted
     assert {:ok, ~s'abc', ""} = single.("'abc'")
+  end
+
+  test "sequence" do 
+    letters = P.map(P.many(P.letter), fn r -> r |> Enum.join("") end)
+    quoted = P.sequence(P.any([P.char("'"), P.char(~s'"'), P.char("`")]), fn 
+      quote -> P.terminated(letters, P.satisfy(
+        fn char -> 
+          char != quote 
+        end)) 
+    end)
+
+    assert {:ok, "abc", quoted.(~s'"abc"')}
+    assert {:ok, "abc", quoted.("'abc'")}
+
+    assert {:ok, "abc--s2_+2_+", quoted.("abc--s2_+2_+")}
   end
 end
